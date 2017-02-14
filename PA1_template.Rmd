@@ -26,16 +26,18 @@ Activity_wo_NA<-na.omit(Activity)
 
 ## What is mean total number of steps taken per day?
 
-```{r, echo=TRUE}
-StepMean<-aggregate(Activity_wo_NA[, 2], list(Activity_wo_NA$date), mean)
-StepMedian<-aggregate(Activity_wo_NA[, 2], list(Activity_wo_NA$date), median)
-Step<-cbind(StepMean,StepMedian[,2])
-colnames(StepMean) <- c("date", "mean")
-colnames(Step) <- c("date", "mean","median")
-#### Histgram of Average Steps by Day
-hist(StepMean$mean, xlab = "average step by day",main = "Histogram of Average Steps by Day",breaks = 10)
-#### Values of Average and Median Steps
-Step
+```{r mean total steps, echo=TRUE}
+
+StepByDay<-aggregate(Activity_wo_NA[, 2], list(Activity_wo_NA$date),sum)
+colnames(StepByDay) <- c("date", "total_steps per day")
+#### Histgram of Steps par Day
+hist(StepByDay[,2], xlab = "step par day",main = "Histogram of Average Steps by Day",breaks = 10)
+
+## mean of total step par day(this will be compared later with one with imputed data):
+mean(StepByDay[,2])
+## median of total step par day(this will be compared later with one with imputed data):
+median(StepByDay[,2])
+
 ```
 
 ## What is the average daily activity pattern?
@@ -43,34 +45,35 @@ Step
 ```{r, echo=TRUE}
 StepMean2<-aggregate(Activity_wo_NA[,2], list(Activity_wo_NA$interval), mean)
 colnames(StepMean2) <- c("interval","mean_step")
-with(StepMean2,plot(x=interval,y=mean_step,type="l",ylab = "mean_step",xlab="interval",main="Interval vs. Average Step"))
+with(StepMean2,plot(x=interval,y=mean_step,type="l",ylab = "average number of steps taken, average across all days",xlab="5-minute interval",main="Interval vs. Average Step"))
 ### Max mean_step is found at interval:
 StepMean2[which.max(StepMean2$mean_step),1]
 ```
 
 ## Imputing missing values
 
-```{r, echo=TRUE}
-#### coubting number of NA in "steps"
+```{r impute, echo=TRUE}
+#### counting number of NA in "steps"
 num_na=plyr::count(is.na(Activity$steps))
 #### number of NA
 num_na[2,2]
-#### imputing NA to 0
+#### imputing NA (NA is imputed to 0)
 Activity$steps[is.na(Activity$steps)]<-0
-StepMean_na0<-aggregate(Activity[, 2], list(Activity$date), mean)
-colnames(StepMean_na0) <- c("date", "mean")
-## average daily steps
-StepMean_na0
+#### steps par day with imputing
+StepByDay_na0<-aggregate(Activity[, 2], list(Activity$date), sum)
+colnames(StepByDay_na0) <- c("date", "total_steps per day")
 
-## interval to give maximum steps
-StepMean_na02<-aggregate(Activity[,2], list(Activity$interval), mean)
-colnames(StepMean_na02) <- c("interval","mean_step")
- 
-### Max mean_step is found at interval:
-StepMean_na02[which.max(StepMean_na02$mean_step),1]
+#### Histgram of Steps par Day
+hist(StepByDay_na0[,2], xlab = "step par day",main = "Histogram of Average Steps by Day with imputed data",breaks = 10)
+
+## mean of total step par day with imputed data:
+mean(StepByDay_na0[,2])
+## median of total step par day with imputed data:
+median(StepByDay_na0[,2])
+
 ```
 
-Both original data (removing na) and one imputed for NA give th same result.
+The imputing of NA by 0 changes mean and median, and, by the obvious reason, adds a small peak at x=0 at the histogram.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 ```{r, echo=TRUE}
@@ -99,4 +102,4 @@ plot(levels(as.factor(Activity_wo_NA$interval)), StepsPerInterval_weekend, type 
 
 ```
 
-There is a differenc between pattern of the distributino of steps: one in weekends spreads more evenly to larger interval, while one in weekday is skewed to lower interval, reflecting time available to do excersise in weekdays.
+There is a difference between the respective patterns of the distributino of steps: one in weekends spreads more evenly to larger interval, while one in weekday is skewed to lower interval, reflecting time available to do excersise in weekdays.
