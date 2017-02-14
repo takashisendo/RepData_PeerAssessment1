@@ -30,8 +30,12 @@ Activity_wo_NA<-na.omit(Activity)
 StepMean<-aggregate(Activity_wo_NA[, 2], list(Activity_wo_NA$date), mean)
 StepMedian<-aggregate(Activity_wo_NA[, 2], list(Activity_wo_NA$date), median)
 Step<-cbind(StepMean,StepMedian[,2])
-colnames(StepMean) <- c("date", "mean","median")
-hist(StepMean$mean, xlab = "average step by day",main = "Histogram of Average Mean by Day",breaks = 10)
+colnames(StepMean) <- c("date", "mean")
+colnames(Step) <- c("date", "mean","median")
+#### Histgram of Average Steps by Day
+hist(StepMean$mean, xlab = "average step by day",main = "Histogram of Average Steps by Day",breaks = 10)
+#### Values of Average and Median Steps
+Step
 ```
 
 ## What is the average daily activity pattern?
