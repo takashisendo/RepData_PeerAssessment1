@@ -27,10 +27,11 @@ Activity_wo_NA<-na.omit(Activity)
 ## What is mean total number of steps taken per day?
 
 ```{r, echo=TRUE}
-hist(Activity_wo_NA$steps)
 StepMean<-aggregate(Activity_wo_NA[, 2], list(Activity_wo_NA$date), mean)
-colnames(StepMean) <- c("date", "mean")
-StepMean
+StepMedian<-aggregate(Activity_wo_NA[, 2], list(Activity_wo_NA$date), median)
+Step<-cbind(StepMean,StepMedian[,2])
+colnames(StepMean) <- c("date", "mean","median")
+hist(StepMean$mean, xlab = "average step by day",main = "Histogram of Average Mean by Day",breaks = 10)
 ```
 
 ## What is the average daily activity pattern?
